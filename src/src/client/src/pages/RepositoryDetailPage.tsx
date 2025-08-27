@@ -1,0 +1,12 @@
+import React from 'react';
+
+const RepositoryDetailPage: React.FC = () => {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Repository Details</h1>
+      <p className="text-gray-600">View repository analysis details here.</p>
+    </div>
+  );
+};
+
+export default RepositoryDetailPage;

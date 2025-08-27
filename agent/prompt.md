@@ -1,4 +1,4 @@
-earn $100
+vibecode a saas, scale it to 50k mrr
 
 notes from Lyndon
 - read the .agent folder to help you

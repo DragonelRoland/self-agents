@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // OAuth connections
+  githubId     String? @unique
+  githubToken  String?
+  gitlabId     String? @unique
+  gitlabToken  String?
+
+  // Subscription
+  subscription   Subscription?
+  subscriptionId String?
+
+  // Organizations
+  organizationMemberships OrganizationMember[]
+  ownedOrganizations      Organization[]       @relation("OrganizationOwner")
+
+  // Repositories
+  repositories Repository[]
+
+  // Analysis results
+  analysisResults AnalysisResult[]
+
+  @@map("users")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Owner
+  owner   User   @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  ownerId String
+
+  // Members
+  members OrganizationMember[]
+
+  // Repositories
+  repositories Repository[]
+
+  // Subscription
+  subscription   Subscription?
+  subscriptionId String?
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id   String @id @default(cuid())
+  role Role   @default(MEMBER)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, organizationId])
+  @@map("organization_members")
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model Repository {
+  id          String  @id @default(cuid())
+  name        String
+  fullName    String  @unique // e.g., "user/repo"
+  description String?
+  isPrivate   Boolean @default(false)
+  language    String?
+  url         String
+  cloneUrl    String
+
+  // Git provider info
+  provider     GitProvider
+  providerId   String // GitHub/GitLab repo ID
+  defaultBranch String?
+
+  // Ownership
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+
+  // Analysis
+  analysisResults AnalysisResult[]
+  lastAnalyzedAt  DateTime?
+  analysisEnabled Boolean          @default(true)
+
+  // Webhooks
+  webhookSecret String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerId])
+  @@map("repositories")
+}
+
+enum GitProvider {
+  GITHUB
+  GITLAB
+}
+
+model AnalysisResult {
+  id String @id @default(cuid())
+
+  // Repository info
+  repository   Repository @relation(fields: [repositoryId], references: [id])
+  repositoryId String
+
+  // Analysis details
+  commitSha     String
+  branch        String   @default("main")
+  analyzedAt    DateTime @default(now())
+  analysisType  String // "full", "incremental", "pr"
+  triggeredBy   String? // "webhook", "manual", "scheduled"
+
+  // Results
+  overallScore    Float
+  qualityScore    Float
+  securityScore   Float
+  performanceScore Float
+  maintainabilityScore Float
+
+  // Metrics
+  totalLines      Int
+  totalFiles      Int
+  codeComplexity  Float
+  testCoverage    Float?
+  duplicateLines  Int
+
+  // Issues found
+  criticalIssues Int @default(0)
+  majorIssues    Int @default(0)
+  minorIssues    Int @default(0)
+  suggestions    Int @default(0)
+
+  // Detailed results (JSON)
+  detailedResults Json
+
+  // AI insights
+  aiInsights      Json?
+  aiSummary       String?
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@index([repositoryId, analyzedAt])
+  @@map("analysis_results")
+}
+
+model Subscription {
+  id     String @id @default(cuid())
+  status SubscriptionStatus
+
+  // Stripe info
+  stripeSubscriptionId String? @unique
+  stripeCustomerId     String?
+  stripePriceId        String?
+
+  // Plan details
+  plan              Plan
+  billingInterval   BillingInterval
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+
+  // Limits
+  maxRepositories Int
+  maxAnalysesPerMonth Int
+  maxTeamMembers Int?
+
+  // Usage tracking
+  repositoriesUsed     Int @default(0)
+  analysesThisMonth    Int @default(0)
+  lastUsageReset       DateTime @default(now())
+
+  // Relationships
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @unique
+
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?       @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  UNPAID
+  TRIALING
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+enum BillingInterval {
+  MONTH
+  YEAR
+}
+
+model WebhookEvent {
+  id String @id @default(cuid())
+
+  // Source
+  provider   GitProvider
+  repository String // full name
+  event      String // "push", "pull_request", etc.
+
+  // Processing
+  processed   Boolean @default(false)
+  processedAt DateTime?
+  error       String?
+
+  // Data
+  payload Json
+
+  createdAt DateTime @default(now())
+
+  @@index([processed, createdAt])
+  @@map("webhook_events")
+}
+
+model ApiKey {
+  id          String   @id @default(cuid())
+  name        String
+  key         String   @unique
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  isActive    Boolean  @default(true)
+  permissions Json // Array of permissions
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("api_keys")
+}
