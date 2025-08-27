@@ -1,4 +1,4 @@
-build a calculator app
+earn $100
 
 notes from Lyndon
 - read the .agent folder to help you
