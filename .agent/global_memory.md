@@ -1,35 +1,50 @@
-# Vibecode SaaS - Global Memory
+# Vibecode - AI Code Analysis Platform
 
 ## Project Overview
-- **Goal**: Build vibecode as a SaaS and scale it to 50k MRR
-- **Current State**: Very early stage with basic agent infrastructure
-- **Timeline**: Aggressive scaling approach needed
+**Product**: AI-powered code analysis SaaS platform for developers and teams
+**Current State**: Full MVP with React frontend, Node.js backend, Prisma DB, GitHub integration
+**Goal**: Scale from current MVP to $50k MRR in 6 months
+**Timeline**: Aggressive growth execution phase
 
-## Key Insights from Analysis
-- Project currently has minimal codebase (just agent tools)
-- Need to define what "vibecode" actually is as a product
-- Starting from scratch essentially - need full SaaS architecture
-- 50k MRR target suggests enterprise/premium pricing model needed
+## Current Architecture (ANALYZED)
+✅ **Existing Infrastructure:**
+- Express.js backend with TypeScript
+- React frontend with TypeScript + Tailwind
+- PostgreSQL database with Prisma ORM
+- GitHub OAuth integration
+- Stripe subscription system
+- Comprehensive data models (Users, Orgs, Repos, Analyses)
+- Security middleware (helmet, CORS, rate limiting)
 
-## Technology Stack Decisions
-- Node.js/TypeScript (evidenced by existing bun usage)
-- Modern web frameworks for rapid development
-- Cloud-first architecture for scalability
+✅ **Core Features Implemented:**
+- User authentication via GitHub
+- Repository analysis with AI (Anthropic Claude)
+- Subscription management (Free, Starter $29, Pro $99)
+- Dashboard and repository management
+- Analysis results with detailed metrics
 
-## Business Model Hypothesis
-- B2B SaaS targeting developers/teams
-- Subscription-based pricing
-- Enterprise features for higher tiers
-- Freemium model to drive adoption
+⚠️ **Growth Blockers Identified:**
+- Missing enterprise features for $500+ customers
+- No conversion optimization or growth marketing
+- Limited analytics/metrics tracking
+- No referral/viral growth mechanisms
+- Missing SEO optimization
+- No advanced team collaboration features
 
-## Success Metrics for 50k MRR
-- Assuming $100/month average: 500 customers
-- Assuming $500/month average: 100 customers  
-- Assuming $1000/month average: 50 customers
-- Mix likely needed across pricing tiers
+## Revenue Strategy to $50k MRR
+**Current Pricing Structure:**
+- Free: 3 repos, 10 analyses/month
+- Starter: $29/mo - 10 repos, 50 analyses
+- Professional: $99/mo - unlimited repos, 500 analyses
+- Enterprise: $499+/mo (to be enhanced)
 
-## Next Steps
-1. Define core product concept
-2. Build MVP rapidly
-3. Focus on market validation
-4. Scale through product-market fit
+**Path to $50k MRR (500 customers @ $100 avg):**
+- Month 1-2: Product optimization + enterprise features → $5k MRR
+- Month 3-4: Growth marketing + conversion optimization → $20k MRR  
+- Month 5-6: Scale + enterprise sales → $50k MRR
+
+## Key Technical Priorities
+1. **Enterprise Features**: Team management, advanced analytics, white-labeling
+2. **Growth Engine**: SEO, referrals, conversion funnels, A/B testing
+3. **Scale Infrastructure**: Performance, monitoring, deployment automation
+4. **Revenue Optimization**: Billing management, usage analytics, churn reduction

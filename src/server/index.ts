@@ -12,6 +12,7 @@ import repositoryRoutes from './routes/repositories';
 import analysisRoutes from './routes/analysis';
 import subscriptionRoutes from './routes/subscriptions';
 import webhookRoutes from './routes/webhooks';
+import organizationRoutes from './routes/organizations';
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/organizations', organizationRoutes);
 app.use('/api/repositories', repositoryRoutes);
 app.use('/api/analysis', analysisRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);

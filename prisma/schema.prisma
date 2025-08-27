@@ -34,6 +34,9 @@ model User {
 
   // Analysis results
   analysisResults AnalysisResult[]
+  
+  // API Keys
+  apiKeys ApiKey[]
 
   @@map("users")
 }
