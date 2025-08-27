@@ -90,8 +90,11 @@ class Calculator {
             this.previousValue = '';
             this.operation = null;
             this.waitingForOperand = true;
+            return true;
         }
 
+        // If no operation is pending, just return current value
+        this.waitingForOperand = false;
         return true;
     }
 

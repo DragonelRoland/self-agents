@@ -265,3 +265,8 @@ CalculatorUI.prototype.handleKeydown = function(e) {
             break;
     }
 };
+
+// Export for testing (Node.js environment)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = CalculatorUI;
+}
